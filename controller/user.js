@@ -3,13 +3,14 @@ const { sendError } = require("../utils/helper");
 const jwt = require("jsonwebtoken");
 
 exports.createUser = async (req, res) => {
-  const { name, email, password, phone, nic } = req.body;
+  const { fname, lname, email, password, phone, nic } = req.body;
 
   const user = await User.findOne({ email });
   if (user) return sendError(res, "This email is already exists");
 
   const newUser = new User({
-    name,
+    fname,
+    lname,
     email,
     password,
     phone,
@@ -36,6 +37,14 @@ exports.signin = async (req, res) => {
 
   res.json({
     success: true,
-    user: { name: user.name, email: user.email, id: user._id, token: token },
+    user: {
+      fname: user.fname,
+      lname: user.lname,
+      email: user.email,
+      phone: user.phone,
+      nic: user.nic,
+      id: user._id,
+      token: token,
+    },
   });
 };
