@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  active: {
+    type: Number,
+    default: 1,
+  },
 });
 
 userSchema.pre("save", async function (next) {

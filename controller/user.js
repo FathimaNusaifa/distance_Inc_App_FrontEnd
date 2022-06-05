@@ -48,3 +48,20 @@ exports.signin = async (req, res) => {
     },
   });
 };
+
+exports.getuserbyemail = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) return sendError(res, "User not found!");
+  res.json({
+    success: true,
+    user: {
+      fname: user.fname,
+      lname: user.lname,
+      email: user.email,
+      phone: user.phone,
+      nic: user.nic,
+      id: user._id,
+    },
+  });
+};
