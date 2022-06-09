@@ -2,6 +2,7 @@ const User = require("../model/user");
 const { sendError } = require("../utils/helper");
 const jwt = require("jsonwebtoken");
 
+//Signup Code segment
 exports.createUser = async (req, res) => {
   const { email, password, phone, nic } = req.body;
 
@@ -14,28 +15,32 @@ exports.createUser = async (req, res) => {
     phone,
     nic,
   });
-  res.send(newUser);
+  // res.send(newUser);
   await newUser.save();
-  return res.send({ success: false, message: "Signup successful!" });
+  return res.send({ success: true, message: "Signup successful!" });
 };
 
+//Signin Code segment
 exports.signin = async (req, res) => {
   const { email, password } = req.body;
-  if (!email.trim() || !password.trim())
-    return sendError(res, "Email/Password Missing");
 
   const user = await User.findOne({ email });
-  if (!user) return sendError(res, "User not found!");
+  if (!user)
+    return res.send({ success: false, message: "username/password is wrong!" });
 
   const isMatched = await user.comparePassword(password);
-  if (!isMatched) return sendError(res, "Email/passoword not match");
 
+  console.log(isMatched);
+  if (isMatched == false) {
+    return res.send({ success: false, message: "username/password is wrong!" });
+  }
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
 
-  res.json({
+  return res.send({
     success: true,
+    message: "Login Successful!",
     user: {
       fname: user.fname,
       lname: user.lname,
@@ -48,6 +53,7 @@ exports.signin = async (req, res) => {
   });
 };
 
+//getting all users code segment
 exports.getuserbyemail = async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
